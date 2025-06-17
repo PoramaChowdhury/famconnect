@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/screens/schedule_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../service/auth_service.dart';
@@ -29,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               child: Text("View Profile"),
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ProfileScreen()),
+                MaterialPageRoute(builder: (_) => ScheduleScreen()),
               ),
             ),
           ],
