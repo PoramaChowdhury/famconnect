@@ -1,4 +1,5 @@
 import 'package:famconnect/features/auth/services/auth_service.dart';
+import 'package:famconnect/features/profiles/screens/profile_screen.dart';
 import 'package:famconnect/features/profiles/screens/user_schedule_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +26,16 @@ class HomeScreen extends StatelessWidget {
             Text('Welcome, ${user?.email}'),
             SizedBox(height: 20),
             ElevatedButton(
+              child: Text("Schedule"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => UserScheduleScreen()),
+              ),
+            ),ElevatedButton(
               child: Text("View Profile"),
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ScheduleScreen()),
+                MaterialPageRoute(builder: (_) => ProfileScreen()),
               ),
             ),
           ],
