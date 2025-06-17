@@ -1,7 +1,8 @@
+import 'package:famconnect/features/auth/screens/login_screen.dart';
+import 'package:famconnect/features/home/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../screens/home_screen.dart';
-import '../screens/login_screen.dart';
+
 
 class AuthService {
   // auth state changes

@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:famconnect/screens/schedule_screen.dart';
+import 'package:famconnect/features/auth/services/auth_service.dart';
+import 'package:famconnect/features/profiles/screens/user_schedule_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../service/auth_service.dart';
-import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser;
