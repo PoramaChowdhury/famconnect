@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserScheduleScreen extends StatefulWidget {
+  const UserScheduleScreen({super.key});
+
   @override
-  _UserScheduleScreenState createState() => _UserScheduleScreenState();
+  State<UserScheduleScreen> createState() => _UserScheduleScreenState();
 }
 
 class _UserScheduleScreenState extends State<UserScheduleScreen> {

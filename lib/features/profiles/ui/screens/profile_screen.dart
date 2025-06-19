@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/home/ui/screens/home_screen.dart';
+import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _phoneTEController = TextEditingController();
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  int _currentIndex = 3;
 
   DateTime? _dob;
   bool _isMarried = false;
@@ -87,14 +91,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _onNavBarTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        break;
+      case 1:
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const EventCreatScreen()),
+      // );
+        break;
+      case 2:
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const FamilyChatScreen()),
+      // );
+        break;
+      case 3:
+
+        break;
+      case 4:
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const SettingsScreen()),
+      // );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Profile"),
+        toolbarHeight: 60,
+        title: const Text('Edit Profile'),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF66B2B2),
+                Color(0xFF66B2B2),
+              ],
+            ),
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.elliptical(11, 11),
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
+            icon: const Icon(Icons.save_as_outlined),
             onPressed: () async {
               if (_formkey.currentState?.validate() ?? false) {
                 await _saveProfile();
@@ -198,6 +253,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavBarWidget(
+        currentIndex: _currentIndex,
+        onNavBarTapped: _onNavBarTapped,
       ),
     );
   }

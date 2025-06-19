@@ -1,5 +1,5 @@
-import 'package:famconnect/features/auth/screens/login_screen.dart';
-import 'package:famconnect/features/home/screens/home_screen.dart';
+import 'package:famconnect/features/auth/ui/screens/login_screen.dart';
+import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
