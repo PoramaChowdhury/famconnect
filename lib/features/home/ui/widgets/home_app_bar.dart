@@ -28,7 +28,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
     super.initState();
     // _loadUserData();
   }
-
+//TODO username load on home app bar
   /*Future<void> _loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
