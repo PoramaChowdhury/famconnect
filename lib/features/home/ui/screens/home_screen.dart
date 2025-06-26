@@ -4,6 +4,7 @@ import 'package:famconnect/features/home/ui/widgets/grid_view_item.dart';
 import 'package:famconnect/features/home/ui/widgets/home_app_bar.dart';
 import 'package:famconnect/features/profiles/ui/screens/profile_screen.dart';
 import 'package:famconnect/features/profiles/ui/screens/user_schedule_screen.dart';
+import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -97,10 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
         );
         break;
       case 4:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const SettingsScreen()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()),
+      );
         break;
     }
   }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
+import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -119,10 +120,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         break;
       case 4:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const SettingsScreen()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()),
+      );
         break;
     }
   }
