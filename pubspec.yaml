@@ -24,6 +24,8 @@ dependencies:
   lottie: ^3.3.1
   google_fonts: ^6.2.1
   shared_preferences: ^2.5.3
+  google_maps_flutter: ^2.12.3
+  location: ^8.0.1
 
 dev_dependencies:
   flutter_test:
