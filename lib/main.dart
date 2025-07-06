@@ -9,7 +9,14 @@ void main() async {
   runApp(FamConnectApp());
 }
 
-class FamConnectApp extends StatelessWidget {
+class FamConnectApp extends StatefulWidget {
+  const FamConnectApp({super.key});
+
+  @override
+  State<FamConnectApp> createState() => _FamConnectAppState();
+}
+
+class _FamConnectAppState extends State<FamConnectApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
