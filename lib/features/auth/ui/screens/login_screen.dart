@@ -1,51 +1,150 @@
-import 'package:famconnect/features/auth/ui/screens/register_screen.dart';
+import 'package:famconnect/app/app_colors.dart';
+import 'package:famconnect/features/auth/services/auth_service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatelessWidget {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+class LogInScreen extends StatefulWidget {
+  const LogInScreen({super.key});
+  static const String name = '/log-in';
 
-  Future<void> signIn(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login failed")));
-    }
+  @override
+  State<LogInScreen> createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> {
+  final TextEditingController _emailTEController = TextEditingController();
+  final TextEditingController _passwordTEController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailTEController.dispose();
+    _passwordTEController.dispose();
+    super.dispose();
   }
+
+  Future<void> _onTapSigninButton() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    await AuthService().signin(
+      _emailTEController.text.trim(),
+      _passwordTEController.text,
+      context,
+    );
+
+  }
+
+
+  void _onTapSignUp() {
+    Get.toNamed('/sign-up');
+  }
+
+  // void _onTapForgetPasswordButton() {
+  //   Get.to(() => const ForgotPasswordScreen());
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('FamConnect', style: Theme.of(context).textTheme.headlineMedium),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+            const SizedBox(height: 88),
+            const SizedBox(height: 24),
+            Text(
+              'Welcome!',
+              style: GoogleFonts.dynaPuff(
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.white,
+              ),
             ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
+            Text(
+              'Let’s Get You In',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
             ),
+            const SizedBox(height: 24),
+            buildForm(),
+            const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => signIn(context),
-              child: Text('Login'),
+              onPressed: _onTapSigninButton,
+              child: const Text('Sign In'),
             ),
-            TextButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => RegisterScreen())),
-              child: Text("Don't have an account? Register"),
-            )
+            const SizedBox(height: 14),
+            // TextButton(
+            //   onPressed: _onTapForgetPasswordButton,
+            //   child: const Text(
+            //     'Forgot your password?',
+            //     style: TextStyle(color: AppColors.themeColor),
+            //   ),
+            // ),
+            _buildSignUpSection(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _emailTEController,
+            keyboardType: TextInputType.emailAddress,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            decoration: const InputDecoration(hintText: 'Email'),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) return 'Enter your email';
+              if (!value.contains('@') || !value.contains('.')) return 'Enter a valid email';
+              return null;
+            },
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _passwordTEController,
+            obscureText: _obscurePassword,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            decoration: InputDecoration(
+              hintText: 'Password',
+              suffixIcon: IconButton(
+                icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) return 'Enter your password';
+              if (value.length < 8) return 'Password must be at least 8 characters';
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignUpSection() {
+    return RichText(
+      text: TextSpan(
+        text: "Don't have an account? ",
+        style: TextStyle(
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+        children: [
+          TextSpan(
+            text: 'Sign up',
+            style: const TextStyle(color: AppColors.themeColor),
+            recognizer: TapGestureRecognizer()..onTap = _onTapSignUp,
+          ),
+        ],
       ),
     );
   }
