@@ -63,9 +63,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveProfile() async {
     try {
       final userModel = UserModel(
-        name: _firstNameTEController.text.trim(),
+        name: _firstNameTEController.text,
         email: _emailTEController.text.trim(),
-        phone: _phoneTEController.text.trim(),
+        phone: _phoneTEController.text,
         dob: _dob,
         isMarried: _isMarried,
         anniversary: _isMarried ? _anniversary : null,
