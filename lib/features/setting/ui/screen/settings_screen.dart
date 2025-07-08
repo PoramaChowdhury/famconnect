@@ -1,3 +1,4 @@
+import 'package:famconnect/features/familychat/ui/screens/family_chat_screen.dart';
 import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
 import 'package:famconnect/features/profiles/ui/screens/profile_screen.dart';
@@ -34,10 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // );
         break;
       case 2:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const FamilyChatScreen()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const FamilyChatScreen()),
+      );
         break;
       case 3:
         Navigator.pushReplacement(
@@ -46,10 +47,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
         break;
       case 4:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const SettingsScreen()),
-      // );
         break;
     }
   }
