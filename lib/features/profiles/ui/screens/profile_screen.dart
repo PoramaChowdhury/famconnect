@@ -165,6 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         alignment: Alignment.bottomRight,
                         children: const [
                           CircleAvatar(radius: 50),
+                          //todo: fix code so that image can upload
                           CircleAvatar(
                             radius: 16,
                             child: Icon(Icons.camera_alt, size: 16),
