@@ -1,47 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   final String uid;
-  final String? name;
-  final String? email;
-  final String? phone;
-  final String? dob;
-  final bool? isMarried;
-  final String? anniversary;
+  final String name;
+  final String email;
+  final String phone;
+  final DateTime? dob;
+  final bool isMarried;
+  final DateTime? anniversary;
   final String? weeklyOff;
 
   UserModel({
     required this.uid,
-    this.name,
-    this.email,
-    this.phone,
+    required this.name,
+    required this.email,
+    required this.phone,
     this.dob,
-    this.isMarried,
+    this.isMarried = false,
     this.anniversary,
     this.weeklyOff,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map, String uid) {
     return UserModel(
-      uid: map['uid'],
-      name: map['name'],
-      email: map['email'],
-      phone: map['phone'],
-      dob: map['dob'],
-      isMarried: map['isMarried'],
-      anniversary: map['anniversary'],
-      weeklyOff: map['weeklyOff'],
+      uid: uid,
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      phone: map['phone'] ?? '',
+      dob: map['dob'] != null ? (map['dob'] as Timestamp).toDate() : null,
+      isMarried: map['isMarried'] ?? false,
+      anniversary: map['anniversary'] != null ? (map['anniversary'] as Timestamp).toDate() : null,
+      weeklyOff: map['weeklyOff'] ?? '',
     );
   }
 
-
   Map<String, dynamic> toMap() {
     return {
-      'uid': uid,
       'name': name,
       'email': email,
       'phone': phone,
-      'dob': dob,
+      'dob': dob != null ? Timestamp.fromDate(dob!) : null,
       'isMarried': isMarried,
-      'anniversary': anniversary,
+      'anniversary': anniversary != null ? Timestamp.fromDate(anniversary!) : null,
       'weeklyOff': weeklyOff,
     };
   }

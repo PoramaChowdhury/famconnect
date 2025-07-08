@@ -25,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   UserModel? _currentUser;
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -37,16 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
       final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final data = doc.data();
       if (data != null) {
         setState(() {
           _currentUser = UserModel.fromMap(data, uid);
-          _isLoading = false;
         });
       }
     } catch (e) {
-      setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Failed to load user data")));
@@ -90,10 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
       appBar: const HomeAppBar(),
       body: Padding(
