@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
+import 'package:famconnect/features/gps_tracker/screens/family_member_tracking_screen.dart';
+import 'package:famconnect/features/gps_tracker/screens/gps_tracker_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -15,8 +17,7 @@ import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
 import 'package:famconnect/features/familychat/ui/widgets/user_model.dart';
 
 
-import '../../../gps_tracker/screens/family_member_tracking_screen.dart';
-import '../../../gps_tracker/screens/gps_tracker_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -195,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
+/*
   void _onNavBarTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -230,5 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
     }
   }
+*/
 
 }
