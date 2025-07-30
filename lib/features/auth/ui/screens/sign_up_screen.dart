@@ -1,7 +1,8 @@
-import 'package:famconnect/features/auth/ui/screens/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:famconnect/features/auth/ui/screens/login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,48 +13,58 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _nameTEController = TextEditingController();
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future<void> register(BuildContext context) async {
 
-  @override
-  void dispose() {
-    _nameTEController.dispose();
-    _emailTEController.dispose();
-    _passwordTEController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _emailTEController.text.trim(),
-        password: _passwordTEController.text,
+
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
 
-      await userCredential.user!.updateDisplayName(_nameTEController.text.trim());
-      await userCredential.user!.sendEmailVerification();
+      final user = userCredential.user;
+      await user!.updateDisplayName(nameController.text.trim());
 
-      // Show success dialog
+      // Save to Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({
+        'name': nameController.text.trim(),
+
+        'email': emailController.text.trim(),
+      });
+
+      // Send email verification
+      await user.sendEmailVerification();
+
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: const Text("Verify Your Email"),
-          content: const Text("We've sent a verification link to your email. Please verify before logging in."),
+
+          content: const Text(
+            "We've sent a verification link to your email. Please verify before logging in.",
+          ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // close dialog
+                Navigator.pop(context);
+
                 Navigator.pushReplacementNamed(context, LogInScreen.name);
               },
               child: const Text("OK"),
@@ -61,8 +72,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ],
         ),
       );
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Signup failed')));
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Registration failed")),
+      );
+
     } finally {
       setState(() => _isLoading = false);
     }
@@ -76,7 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           children: [
             const SizedBox(height: 60),
-            const SizedBox(height: 16),
+
             Text(
               'Create an Account',
               style: GoogleFonts.dynaPuff(
@@ -88,14 +103,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 8),
             Text(
               'Register to get started!',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.grey),
+
             ),
             const SizedBox(height: 24),
             buildForm(),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _isLoading ? null : _register,
-              child: _isLoading ? const CircularProgressIndicator() : const Text("Sign Up"),
+
+              onPressed: _isLoading ? null : () => register(context),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text("Sign Up"),
+
             ),
           ],
         ),
@@ -109,30 +133,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         children: [
           TextFormField(
-            controller: _nameTEController,
+
+            controller: nameController,
             decoration: const InputDecoration(hintText: 'Full Name'),
-            validator: (value) => value!.trim().isEmpty ? 'Enter your name' : null,
+            validator: (value) =>
+            value!.trim().isEmpty ? 'Enter your name' : null,
           ),
           const SizedBox(height: 8),
           TextFormField(
-            controller: _emailTEController,
+            controller: emailController,
+
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(hintText: 'Email'),
             validator: (value) {
               if (value!.trim().isEmpty) return 'Enter your email';
-              if (!value.contains('@') || !value.contains('.')) return 'Enter a valid email';
+
+              if (!value.contains('@') || !value.contains('.')) {
+                return 'Enter a valid email';
+              }
+
               return null;
             },
           ),
           const SizedBox(height: 8),
           TextFormField(
-            controller: _passwordTEController,
+
+            controller: passwordController,
+
             obscureText: !_isPasswordVisible,
             decoration: InputDecoration(
               hintText: 'Password',
               suffixIcon: IconButton(
-                icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+
+                icon: Icon(_isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off),
+                onPressed: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
+
               ),
             ),
             validator: (value) {

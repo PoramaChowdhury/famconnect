@@ -114,7 +114,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ),
           IconButton(
             onPressed: () async {
-              await AuthService().signout(context); // Pass context here
+
+              await AuthService().signout(context);
+
             },
             icon: _buildLottieIcon(AssetsPath.logout),
           ),

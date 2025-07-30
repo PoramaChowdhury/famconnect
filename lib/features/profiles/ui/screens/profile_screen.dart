@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/familychat/ui/screens/family_chat_screen.dart';
 import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
 import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
+import 'package:famconnect/features/familychat/ui/widgets/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,13 +15,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final userId = FirebaseAuth.instance.currentUser!.uid;
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _firstNameTEController = TextEditingController();
+  final TextEditingController _nameTEController = TextEditingController();
   final TextEditingController _phoneTEController = TextEditingController();
 
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int _currentIndex = 3;
 
   DateTime? _dob;
@@ -28,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _weeklyOff;
 
   bool isLoading = true;
+  UserModel? _userModel;
 
   @override
   void initState() {
@@ -37,29 +39,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
       final data = doc.data();
-
       if (data != null) {
-        _firstNameTEController.text = data['name'] ?? '';
-        _emailTEController.text = data['email'] ?? '';
-        _phoneTEController.text = data['phone'] ?? '';
-        _weeklyOff = data['weeklyOff'];
-
-        if (data['dob'] != null) {
-          _dob = (data['dob'] as Timestamp).toDate();
-        }
-
-        if (data['isMarried'] == true) {
-          _isMarried = true;
-          if (data['anniversary'] != null) {
-            _anniversary = (data['anniversary'] as Timestamp).toDate();
-          }
-        }
+        _userModel = UserModel.fromMap(data, userId);
+        _nameTEController.text = _userModel!.name;
+        _emailTEController.text = _userModel!.email;
+        _phoneTEController.text = _userModel!.phone;
+        _dob = _userModel!.dob;
+        _isMarried = _userModel!.isMarried;
+        _anniversary = _userModel!.anniversary;
+        _weeklyOff = _userModel!.weeklyOff;
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to load profile data")),
+        const SnackBar(content: Text("Failed to load profile data")),
       );
     }
 
@@ -68,27 +66,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _saveProfile() async {
     try {
-      final profileData = {
-        'name': _firstNameTEController.text.trim(),
-        'email': _emailTEController.text.trim(),
-        'phone': _phoneTEController.text.trim(),
-        'dob': _dob != null ? Timestamp.fromDate(_dob!) : null,
-        'isMarried': _isMarried,
-        'anniversary': _isMarried && _anniversary != null
-            ? Timestamp.fromDate(_anniversary!)
-            : null,
-        'weeklyOff': _weeklyOff,
-      };
+      final userModel = UserModel(
+        uid: userId,
+        name: _nameTEController.text,
+        // not editable, so still save
+        email: _emailTEController.text,
+        phone: _phoneTEController.text,
+        dob: _dob,
+        isMarried: _isMarried,
+        anniversary: _isMarried ? _anniversary : null,
+        weeklyOff: _weeklyOff,
+      );
 
-      await FirebaseFirestore.instance.collection('users').doc(userId).update(profileData);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update(userModel.toMap());
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Profile updated successfully")),
+        const SnackBar(content: Text("Profile updated successfully")),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to save profile")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Failed to save profile")));
     }
   }
 
@@ -101,29 +102,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
         break;
       case 1:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const EventCreatScreen()),
-      // );
         break;
       case 2:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const FamilyChatScreen()),
-      // );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const FamilyChatScreen()),
+        );
         break;
       case 3:
-
         break;
       case 4:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()),
-      );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+        );
         break;
     }
   }
@@ -133,15 +129,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60,
-        title: const Text('Edit Profile'),
+        title: const Text('Profile'),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF66B2B2),
-                Color(0xFF66B2B2),
-              ],
+              colors: [Color(0xFF66B2B2), Color(0xFF66B2B2)],
             ),
             borderRadius: BorderRadius.vertical(
               bottom: Radius.elliptical(11, 11),
@@ -152,109 +145,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.save_as_outlined),
             onPressed: () async {
-              if (_formkey.currentState?.validate() ?? false) {
+              if (_formKey.currentState?.validate() ?? false) {
                 await _saveProfile();
               }
             },
-          )
+          ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formkey,
-          child: Column(
-            children: [
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: const [
-                  CircleAvatar(radius: 50),
-                  CircleAvatar(
-                    radius: 16,
-                    child: Icon(Icons.camera_alt, size: 16),
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: const [
+                          CircleAvatar(radius: 50),
+                          //todo: fix code so that image can upload
+                          CircleAvatar(
+                            radius: 16,
+                            child: Icon(Icons.camera_alt, size: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Your Information",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: _nameTEController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          hintText: "Full Name",
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _phoneTEController,
+                        decoration: const InputDecoration(hintText: "Phone"),
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _emailTEController,
+                        readOnly: true,
+                        decoration: const InputDecoration(hintText: "Email"),
+                      ),
+                      const SizedBox(height: 10),
+                      _datePickerTile(
+                        context,
+                        label: "Date of Birth",
+                        date: _dob,
+                        onTap:
+                            () => _pickDate(
+                              context,
+                              (picked) => setState(() => _dob = picked),
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Text("Married?"),
+                          Switch(
+                            value: _isMarried,
+                            onChanged:
+                                (val) => setState(() => _isMarried = val),
+                          ),
+                        ],
+                      ),
+                      _isMarried
+                          ? _datePickerTile(
+                            context,
+                            label: "Anniversary",
+                            date: _anniversary,
+                            onTap:
+                                () => _pickDate(
+                                  context,
+                                  (picked) =>
+                                      setState(() => _anniversary = picked),
+                                ),
+                          )
+                          : const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Marriage Anniversary: No"),
+                          ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: "Weekly Day Off",
+                        ),
+                        value: _weeklyOff,
+                        items:
+                            const [
+                                  "No",
+                                  "Monday",
+                                  "Tuesday",
+                                  "Wednesday",
+                                  "Thursday",
+                                  "Friday",
+                                  "Saturday",
+                                  "Sunday",
+                                ]
+                                .map(
+                                  (day) => DropdownMenuItem(
+                                    value: day,
+                                    child: Text(day),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) => setState(() => _weeklyOff = val),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Your Information",
-                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _firstNameTEController,
-                decoration: const InputDecoration(labelText: "First Name"),
-              ),
-              TextFormField(
-                controller: _phoneTEController,
-                decoration: const InputDecoration(labelText: "Phone"),
-                keyboardType: TextInputType.phone,
-              ),
-              TextFormField(
-                controller: _emailTEController,
-                decoration: const InputDecoration(labelText: "Email Id"),
-                readOnly: true,
-              ),
-              const SizedBox(height: 10),
-              _datePickerTile(
-                context,
-                label: "Date of Birth",
-                date: _dob,
-                onTap: () => _pickDate(context, (picked) {
-                  setState(() => _dob = picked);
-                }),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Text("Married?"),
-                  Switch(
-                    value: _isMarried,
-                    onChanged: (val) => setState(() => _isMarried = val),
-                  ),
-                ],
-              ),
-              _isMarried
-                  ? _datePickerTile(
-                context,
-                label: "Anniversary",
-                date: _anniversary,
-                onTap: () => _pickDate(context, (picked) {
-                  setState(() => _anniversary = picked);
-                }),
-              )
-                  : const Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Marriage Anniversary: No"),
-              ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: "Weekly Day Off"),
-                value: _weeklyOff,
-                items: const [
-                  "No",
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday"
-                ]
-                    .map((day) =>
-                    DropdownMenuItem(value: day, child: Text(day)))
-                    .toList(),
-                onChanged: (val) => setState(() => _weeklyOff = val),
-              ),
-            ],
-          ),
-        ),
-      ),
       bottomNavigationBar: BottomNavBarWidget(
         currentIndex: _currentIndex,
         onNavBarTapped: _onNavBarTapped,
@@ -263,11 +276,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _datePickerTile(
-      BuildContext context, {
-        required String label,
-        required DateTime? date,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required String label,
+    required DateTime? date,
+    required VoidCallback onTap,
+  }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(label),
@@ -280,16 +293,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickDate(
-      BuildContext context,
-      Function(DateTime) onSelected,
-      ) async {
+    BuildContext context,
+    Function(DateTime) onSelected,
+  ) async {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: now,
+      initialDate: _dob ?? now,
       firstDate: DateTime(1900),
       lastDate: now,
     );
     if (picked != null) onSelected(picked);
+  }
+
+  @override
+  void dispose() {
+    _emailTEController.dispose();
+    _nameTEController.dispose();
+    _phoneTEController.dispose();
+    super.dispose();
   }
 }
