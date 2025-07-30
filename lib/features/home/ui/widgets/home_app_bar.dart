@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
@@ -28,7 +27,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
     super.initState();
     // _loadUserData();
   }
-//TODO username load on home app bar
+
+  //TODO username load on home app bar
   /*Future<void> _loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -69,10 +69,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         height: 300.0,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF66B2B2),
-              Color(0xFF66B2B2),
-            ],
+            colors: [Color(0xFF66B2B2), Color(0xFF66B2B2)],
           ),
           borderRadius: BorderRadius.vertical(
             bottom: Radius.elliptical(11, 11),
@@ -84,9 +81,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
           CircleAvatar(
             backgroundColor: Colors.white,
             radius: 20,
-            backgroundImage: profileImageBase64.isNotEmpty
-                ? MemoryImage(base64Decode(profileImageBase64)) as ImageProvider
-                : AssetImage(AssetsPath.defaultProfileImage) as ImageProvider,
+            backgroundImage:
+                profileImageBase64.isNotEmpty
+                    ? MemoryImage(base64Decode(profileImageBase64))
+                        as ImageProvider
+                    : AssetImage(AssetsPath.defaultProfileImage)
+                        as ImageProvider,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -114,20 +114,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ),
           IconButton(
             onPressed: () async {
-              await AuthService().signOut();
+
+              await AuthService().signout(context);
+
             },
             icon: _buildLottieIcon(AssetsPath.logout),
           ),
+
         ],
       ),
     );
   }
 
   Widget _buildLottieIcon(String assetPath) {
-    return Lottie.asset(
-      assetPath,
-      width: 35,
-      height: 35,
-    );
+    return Lottie.asset(assetPath, width: 35, height: 35);
   }
 }
