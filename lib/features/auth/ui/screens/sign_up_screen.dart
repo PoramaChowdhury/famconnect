@@ -23,11 +23,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
 
   Future<void> register(BuildContext context) async {
+
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
+
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
         email: emailController.text.trim(),
@@ -54,6 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text("Verify Your Email"),
+
           content: const Text(
             "We've sent a verification link to your email. Please verify before logging in.",
           ),
@@ -61,6 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
+
                 Navigator.pushReplacementNamed(context, LogInScreen.name);
               },
               child: const Text("OK"),
@@ -68,10 +72,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ],
         ),
       );
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration failed")),
       );
+
     } finally {
       setState(() => _isLoading = false);
     }
@@ -85,6 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           children: [
             const SizedBox(height: 60),
+
             Text(
               'Create an Account',
               style: GoogleFonts.dynaPuff(
@@ -96,19 +103,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 8),
             Text(
               'Register to get started!',
+
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
                   ?.copyWith(color: Colors.grey),
+
             ),
             const SizedBox(height: 24),
             buildForm(),
             const SizedBox(height: 16),
             ElevatedButton(
+
               onPressed: _isLoading ? null : () => register(context),
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text("Sign Up"),
+
             ),
           ],
         ),
@@ -122,6 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         children: [
           TextFormField(
+
             controller: nameController,
             decoration: const InputDecoration(hintText: 'Full Name'),
             validator: (value) =>
@@ -130,28 +142,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const SizedBox(height: 8),
           TextFormField(
             controller: emailController,
+
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(hintText: 'Email'),
             validator: (value) {
               if (value!.trim().isEmpty) return 'Enter your email';
+
               if (!value.contains('@') || !value.contains('.')) {
                 return 'Enter a valid email';
               }
+
               return null;
             },
           ),
           const SizedBox(height: 8),
           TextFormField(
+
             controller: passwordController,
+
             obscureText: !_isPasswordVisible,
             decoration: InputDecoration(
               hintText: 'Password',
               suffixIcon: IconButton(
+
                 icon: Icon(_isPasswordVisible
                     ? Icons.visibility
                     : Icons.visibility_off),
                 onPressed: () =>
                     setState(() => _isPasswordVisible = !_isPasswordVisible),
+
               ),
             ),
             validator: (value) {
