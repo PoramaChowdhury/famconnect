@@ -21,16 +21,15 @@ dependencies:
   lottie: ^3.3.1
   google_fonts: ^6.2.1
   shared_preferences: ^2.5.3
-
   encrypt: ^5.0.3
   pointycastle: ^3.6.1
 #  flutter_local_notifications: ^19.3.0
   table_calendar: ^3.2.0
   timezone: ^0.10.1
-
+  generative_ai_dart: ^0.1.2
   google_maps_flutter: ^2.12.3
   location: ^8.0.1
-
+  google_generative_ai: ^0.4.6
 
 dev_dependencies:
   flutter_test:
