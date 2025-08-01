@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/dinner_booking/screen/dinner_booking_screen.dart';
 import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
+import 'package:famconnect/features/gifts/screens/gift_suggestion_screen.dart';
 import 'package:famconnect/features/gps_tracker/screens/family_member_tracking_screen.dart';
 import 'package:famconnect/features/gps_tracker/screens/gps_tracker_screen.dart';
+import 'package:famconnect/features/smart_dinner/ui/screen/smart_dinner_booking_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -108,10 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+                  mainAxisSpacing: 10,
                 ),
 
-                itemCount: 3, // Only Schedule item
+                itemCount: 7, // Only Schedule item
                 itemBuilder: (context, index) {
                   switch (index) {
                     case 0:
@@ -178,7 +181,119 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       );
+                    case 3:
+                      return GridViewItem(
+                        icon: Lottie.asset(
+                          AssetsPath.scheduleIcon,
+                          height: 70,
+                          width: 70,
 
+                        ),
+                        label: 'Schedule',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              // builder: (context) => FamilyMapScreen(userId: '2',),
+                              builder: (context) {
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user == null) {
+                                  // Optionally show error or redirect to login
+                                  return const Center(
+                                    child: Text("User not logged in"),
+                                  );
+                                }
+                                return UserScheduleScreen();
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    case 4:
+                      return GridViewItem(
+                        icon: Lottie.asset(
+                          AssetsPath.scheduleIcon,
+                          height: 70,
+                          width: 70,
+
+                        ),
+                        label: 'Gift Suggestion ',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              // builder: (context) => FamilyMapScreen(userId: '2',),
+                              builder: (context) {
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user == null) {
+                                  // Optionally show error or redirect to login
+                                  return const Center(
+                                    child: Text("User not logged in"),
+                                  );
+                                }
+                                return GiftSuggestionScreen();
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    case 5:
+                      return GridViewItem(
+                        icon: Lottie.asset(
+                          AssetsPath.scheduleIcon,
+                          height: 70,
+                          width: 70,
+
+                        ),
+                        label: 'Core management',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              // builder: (context) => FamilyMapScreen(userId: '2',),
+                              builder: (context) {
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user == null) {
+                                  // Optionally show error or redirect to login
+                                  return const Center(
+                                    child: Text("User not logged in"),
+                                  );
+                                }
+                                return GiftSuggestionScreen();
+                              },
+                            ),
+                          );
+                        },
+                      );
+
+                    case 6:
+                      return GridViewItem(
+                        icon: Lottie.asset(
+                          AssetsPath.scheduleIcon,
+                          height: 70,
+                          width: 70,
+
+                        ),
+                        label: 'Diner booking',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              // builder: (context) => FamilyMapScreen(userId: '2',),
+                              builder: (context) {
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user == null) {
+                                  // Optionally show error or redirect to login
+                                  return const Center(
+                                    child: Text("User not logged in"),
+                                  );
+                                }
+                                return AllUsersFreeTimeScreen ();
+                              },
+                            ),
+                          );
+                        },
+                      );
                     default:
                       return const SizedBox.shrink();
                   }

@@ -20,7 +20,7 @@ class GridViewItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           icon,
-          const SizedBox(height: 8),
+          const SizedBox(height: 3),
           Text(label, textAlign: TextAlign.center),
         ],
       ),

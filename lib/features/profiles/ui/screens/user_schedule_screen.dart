@@ -5,71 +5,93 @@ import 'package:table_calendar/table_calendar.dart';
 
 class UserScheduleScreen extends StatefulWidget {
   const UserScheduleScreen({super.key});
-
   @override
   State<UserScheduleScreen> createState() => _UserScheduleScreenState();
 }
-
 class _UserScheduleScreenState extends State<UserScheduleScreen> {
   DateTime _selectedDay = DateTime.now();
   final Map<DateTime, List<Map<String, String>>> _events = {};
+  @override
+  void initState() {
+    super.initState();
+    _loadEventsForDay(_selectedDay);
+  }
 
-  // void _addEvent(String status, String description) {
-  //   final key = DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
-  //   if (_events[key] == null) {
-  //     _events[key] = [];
-  //   }
-  //   if (_events[key]!.length < 2) {
-  //     _events[key]!.add({"status": status, "description": description});
-  //     setState(() {});
-  //   }
-  // }
-
-  // void _showAddDialog() {
-  //   final statusController = TextEditingController();
-  //   final descController = TextEditingController();
-  //   showDialog(
-  //     context: context,
-  //     builder: (_) => AlertDialog(
-  //       title: const Text("Add Schedule"),
-  //       content: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           DropdownButtonFormField<String>(
-  //             value: "Busy",
-  //             items: const [DropdownMenuItem(value: "Busy", child: Text("Busy")), DropdownMenuItem(value: "Free", child: Text("Free"))],
-  //             onChanged: (value) => statusController.text = value ?? "Busy",
-  //             decoration: const InputDecoration(labelText: "Status"),
-  //           ),
-  //           TextField(
-  //             controller: descController,
-  //             decoration: const InputDecoration(labelText: "Description"),
-  //           ),
-  //         ],
-  //       ),
-  //       actions: [
-  //         TextButton(
-  //             onPressed: () {
-  //               _addEvent(statusController.text.isEmpty ? "Busy" : statusController.text, descController.text);
-  //               Navigator.pop(context);
-  //             },
-  //             child: const Text("Add"))
-  //       ],
-  //     ),
-  //   );
-  // }
-  void _addEvent(String status, String description, String timeRange) {
-    final key = DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+  void _addEvent(String status, String description, String timeRange) async {
+    final key = DateTime.utc(_selectedDay.year, _selectedDay.month, _selectedDay.day);
     if (_events[key] == null) {
       _events[key] = [];
     }
+
     if (_events[key]!.length < 2) {
       final label = description.trim().isEmpty ? status : description;
-      _events[key]!.add({"status": status, "description": "$label at $timeRange"});
+
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User not logged in")),
+        );
+        return;
+      }
+
+      final eventData = {
+        "status": status,
+        "description": "$label at $timeRange",
+        "date": Timestamp.fromDate(key),
+        "timeRange": timeRange,
+      };
+
+      final docRef = await FirebaseFirestore.instance
+          .collection('user_schedules')
+          .doc(user.uid)
+          .collection('schedules')
+          .add(eventData);
+
+      _events[key]!.add({
+        "status": status,
+        "description": "$label at $timeRange",
+        "docId": docRef.id,
+      });
+
       setState(() {});
     }
   }
 
+  Future<void> _loadEventsForDay(DateTime day) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final dayStart = DateTime.utc(day.year, day.month, day.day);
+    final dayEnd = dayStart.add(const Duration(days: 1));
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('user_schedules')
+        .doc(user.uid)
+        .collection('schedules')
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(dayStart))
+        .where('date', isLessThan: Timestamp.fromDate(dayEnd))
+        .get();
+
+    final eventList = querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      return {
+        "status": (data['status'] ?? 'Busy').toString(),
+        "description": (data['description'] ?? '').toString(),
+        "docId": doc.id,
+      };
+    }).toList();
+
+    setState(() {
+      _events[dayStart] = eventList;
+    });
+    print("Loading events for $dayStart");
+    print("Query returned ${querySnapshot.docs.length} documents");
+    for (var doc in querySnapshot.docs) {
+      print(doc.id);
+      print(doc.data());
+    }
+
+  }
 
   void _showAddDialog() {
     String selectedStatus = "Busy";
@@ -79,100 +101,148 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
 
     showDialog(
       context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setStateDialog) => AlertDialog(
-          title: const Text("Add Schedule"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<String>(
-                value: selectedStatus,
-                items: const [
-                  DropdownMenuItem(value: "Busy", child: Text("Busy")),
-                  DropdownMenuItem(value: "Free", child: Text("Free")),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setStateDialog(() => selectedStatus = value);
-                  }
-                },
-                decoration: const InputDecoration(labelText: "Status"),
-              ),
-              TextField(
-                controller: descController,
-                decoration: const InputDecoration(labelText: "Description"),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (time != null) {
-                    setStateDialog(() => startTime = time);
-                  }
-                },
-                child: Text(startTime == null
-                    ? 'Select Start Time'
-                    : 'Start: ${startTime!.format(context)}'),
-              ),
-              SizedBox(height: 5,),
-              ElevatedButton(
-                onPressed: () async {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (time != null) {
-                    setStateDialog(() => endTime = time);
-                  }
-                },
-                child: Text(endTime == null
-                    ? 'Select End Time'
-                    : 'End: ${endTime!.format(context)}'),
-              ),
-            ],
+      builder:
+          (_) => StatefulBuilder(
+            builder:
+                (context, setStateDialog) => AlertDialog(
+                  title: const Text("Add Schedule"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        value: selectedStatus,
+                        items: const [
+                          DropdownMenuItem(value: "Busy", child: Text("Busy")),
+                          DropdownMenuItem(value: "Free", child: Text("Free")),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            setStateDialog(() => selectedStatus = value);
+                          }
+                        },
+                        decoration: const InputDecoration(labelText: "Status"),
+                      ),
+                      TextField(
+                        controller: descController,
+                        decoration: const InputDecoration(
+                          labelText: "Description",
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (time != null) {
+                            setStateDialog(() => startTime = time);
+                          }
+                        },
+                        child: Text(
+                          startTime == null
+                              ? 'Select Start Time'
+                              : 'Start: ${startTime!.format(context)}',
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (time != null) {
+                            setStateDialog(() => endTime = time);
+                          }
+                        },
+                        child: Text(
+                          endTime == null
+                              ? 'Select End Time'
+                              : 'End: ${endTime!.format(context)}',
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        if (startTime != null && endTime != null) {
+                          final timeRange =
+                              '${startTime!.format(context)} - ${endTime!.format(context)}';
+                          _addEvent(
+                            selectedStatus,
+                            descController.text,
+                            timeRange,
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text("Add"),
+                    ),
+                  ],
+                ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                if (startTime != null && endTime != null) {
-                  final timeRange =
-                      '${startTime!.format(context)} - ${endTime!.format(context)}';
-                  _addEvent(
-                    selectedStatus,
-                    descController.text,
-                    timeRange,
-                  );
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text("Add"),
-            )
-          ],
-        ),
-      ),
     );
   }
-
-
 
   Widget _buildEventList() {
-    final key = DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+    final key = DateTime.utc(
+      _selectedDay.year,
+      _selectedDay.month,
+      _selectedDay.day,
+    );
+
     final events = _events[key] ?? [];
+    print('Events for $key: $events'); // debug output
+    if (events.isEmpty) {
+      return const Text("No events for this day");
+    }
     return Column(
-      children: events
-          .map((e) => Card(
-        color: e["status"] == "Busy" ? Colors.deepOrangeAccent.withOpacity(0.2) : Colors.lightBlueAccent.withOpacity(0.2),
-        child: ListTile(
-          title: Text(e["status"]!),
-          subtitle: Text(e["description"]!),
-        ),
-      ))
-          .toList(),
+      children:
+          events
+              .map(
+                (e) => Card(
+                  color:
+                      e["status"] == "Busy"
+                          ? Colors.deepOrangeAccent.withOpacity(0.2)
+                          : Colors.lightBlueAccent.withOpacity(0.2),
+                  child: ListTile(
+                    title: Text(e["status"]!),
+                    subtitle: Text(e["description"]!),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteEvent(e, key),
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
     );
   }
+
+  void _deleteEvent(Map<String, String> event, DateTime key) async {
+    final docId = event["docId"];
+    final user = FirebaseAuth.instance.currentUser;
+    if (docId != null && user != null) {
+      await FirebaseFirestore.instance
+          .collection('user_schedules')
+          .doc(user.uid)
+          .collection('schedules')
+          .doc(docId)
+          .delete();
+    }
+
+    _events[key]?.remove(event);
+
+    if (_events[key]?.isEmpty ?? true) {
+      _events.remove(key);
+    }
+
+    setState(() {});
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +260,7 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
               setState(() {
                 _selectedDay = selectedDay;
               });
+              _loadEventsForDay(selectedDay);
             },
           ),
           const SizedBox(height: 10),
@@ -203,4 +274,3 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
     );
   }
 }
-
