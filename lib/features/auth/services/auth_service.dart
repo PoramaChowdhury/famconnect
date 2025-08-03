@@ -1,10 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famconnect/features/auth/ui/screens/login_screen.dart';
+import 'package:famconnect/features/common/ui/widgets/custom_snakebar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> resetPassword(String email, BuildContext context) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      showSnackBarMessage(
+        context,
+        "Password reset email sent. Check your inbox.",
+      );
+    } on FirebaseAuthException catch (e) {
+      showSnackBarMessage(
+        context,
+        e.message ?? "Error sending reset email.",
+        true,
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserData(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        throw Exception("User data not found");
+      }
+
+      return userDoc.data() as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception("Failed to fetch user data: $e");
+    }
+  }
+
 
   Future<void> registerUser({
     required String name,
@@ -17,51 +51,46 @@ class AuthService {
         email: email,
         password: password,
       );
-
       await userCred.user!.updateDisplayName(name);
-
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userCred.user!.uid)
           .set({
-        'uid': userCred.user!.uid,
-        'name': name,
-        'email': email,
-        'createdAt': Timestamp.now(),
-      });
-
+            'uid': userCred.user!.uid,
+            'name': name,
+            'email': email,
+            'createdAt': Timestamp.now(),
+          });
       await userCred.user!.sendEmailVerification();
-
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Verify Your Email"),
-          content: const Text(
-            "We've sent a verification link to your email. Please verify before logging in.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/log-in');
-              },
-              child: const Text("OK"),
+        builder:
+            (_) => AlertDialog(
+              title: const Text("Verify Your Email"),
+              content: const Text(
+                "We've sent a verification link to your email. Please verify before logging in.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, '/log-in');
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Registration failed")),
-      );
+      showSnackBarMessage(context, e.message ?? "Registration failed", true);
     }
   }
 
   Future<void> signin(
-      String email,
-      String password,
-      BuildContext context,
-      ) async {
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
       final userCred = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -86,9 +115,7 @@ class AuthService {
         );
       }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Login failed")),
-      );
+      showSnackBarMessage(context, e.message ?? "Login failed", true);
     }
   }
 

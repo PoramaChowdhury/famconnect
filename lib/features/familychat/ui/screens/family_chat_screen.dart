@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:famconnect/features/familychat/ui/screens/chat_room_screen.dart';
 import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
@@ -115,11 +116,7 @@ class _FamilyChatScreenState extends State<FamilyChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Family Chat'),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-      ),
+      appBar: CustomAppBar(title: 'Family Chat'),
       body: Column(
         children: [
           ListTile(

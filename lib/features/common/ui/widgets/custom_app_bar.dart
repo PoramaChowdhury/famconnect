@@ -4,43 +4,43 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
 
-  const CustomAppBar({Key? key, required this.title}) : super(key: key);
+  const CustomAppBar({super.key, required this.title});
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AppBar(
       toolbarHeight: 60,
       title: Text(
-        widget.title, // Use widget.title to access the title property
+        widget.title,
         style: GoogleFonts.dynaPuff(
-          color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 20,
         ),
       ),
-      centerTitle: true,
+      backgroundColor: isDark ? const Color(0xFF121B22) : Colors.white,
+      iconTheme: IconThemeData(
+        color: isDark ? Colors.white : Colors.black,
+      ),
+      elevation: 4,
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF66B2B2),
-              Color(0xFF66B2B2),
-            ],
-          ),
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.elliptical(11, 11),
+        decoration: BoxDecoration(
+          // color: isDark ? const Color(0xFF121B22) : Colors.white,
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.elliptical(12, 12),
           ),
         ),
       ),
     );
+
   }
 }

@@ -30,6 +30,8 @@ dependencies:
   google_maps_flutter: ^2.12.3
   location: ^8.0.1
   google_generative_ai: ^0.4.6
+  flutter_image_compress: ^2.4.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

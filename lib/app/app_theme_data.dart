@@ -14,11 +14,11 @@ class AppThemeData {
       ),
 
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color(0xFFF0F0F0),
         elevation: 3,
         iconTheme: IconThemeData(color: Colors.black87),
         titleTextStyle: TextStyle(
-          color: Colors.black87,
+          color: Color(0xFFFF8A65),
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
@@ -66,6 +66,11 @@ class AppThemeData {
           foregroundColor: AppColors.themeColor,
         ),
       ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Color(0xFFF0F0F0), // or Color(0xFFF0F0F0) for light theme
+        selectedItemColor: AppColors.themeColor,
+        unselectedItemColor: Colors.grey,
+      ),
     );
   }
 
@@ -80,11 +85,11 @@ class AppThemeData {
       ),
 
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color(0xFF121B22),
         elevation: 3,
         iconTheme: IconThemeData(color: Colors.white),
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.white ,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
@@ -125,6 +130,11 @@ class AppThemeData {
           ),
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Color(0xFF121B22), // or Color(0xFFF0F0F0) for light theme
+        selectedItemColor: AppColors.themeColor,
+        unselectedItemColor: Colors.grey,
       ),
     );
   }
