@@ -158,7 +158,7 @@ class _CoreManagementScreenState extends State<CoreManagementScreen> {
                     tooltip: 'Assign Task',
                     onPressed: () {
                       Navigator.push(
-                        context,
+                        context, 
                         MaterialPageRoute(
                           builder: (_) => AssignTaskScreen(
                             userName: slot.userName,
