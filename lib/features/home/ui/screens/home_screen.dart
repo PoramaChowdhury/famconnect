@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/core/core_management_screen.dart';
 import 'package:famconnect/features/dinner_booking/screen/dinner_booking_screen.dart';
 import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
 import 'package:famconnect/features/gifts/screens/gift_suggestion_screen.dart';
@@ -259,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Text("User not logged in"),
                                   );
                                 }
-                                return GiftSuggestionScreen();
+                                return CoreManagementScreen();
                               },
                             ),
                           );
