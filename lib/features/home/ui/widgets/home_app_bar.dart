@@ -25,11 +25,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
   @override
   void initState() {
     super.initState();
-    // _loadUserData();
+     _loadUserData();
   }
 
   //TODO username load on home app bar
-  /*Future<void> _loadUserData() async {
+  Future<void> _loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -47,7 +47,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         Map<String, dynamic> userData = await AuthService().getUserData(user.uid);
         if (mounted) {
           setState(() {
-            name = userData['firstName'] ?? '';
+            name = userData['name'] ?? '';
             email = userData['email'] ?? '';
             profileImageBase64 = userData['profileImageBase64'] ?? '';
           });
@@ -59,7 +59,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         print("Error fetching user data: $e");
       }
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +68,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
       flexibleSpace: Container(
         height: 300.0,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF66B2B2), Color(0xFF66B2B2)],
-          ),
+          color: Color(0xFFFF8A65),
           borderRadius: BorderRadius.vertical(
             bottom: Radius.elliptical(11, 11),
           ),

@@ -13,10 +13,12 @@ class BottomNavBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return CustomLineIndicatorBottomNavbar(
-      selectedColor: Colors.teal,
-      unSelectedColor: Colors.grey,
-      backgroundColor: Colors.white,
+      selectedColor: isDark ? Color(0xFFFF8A65) : Colors.deepOrange,
+      unSelectedColor: isDark ? Colors.white70 : Colors.grey,
+      backgroundColor: isDark ? Color(0xFF121B22) : Colors.white,
       currentIndex: currentIndex,
       onTap: onNavBarTapped,
       enableLineIndicator: true,
