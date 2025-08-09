@@ -25,7 +25,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   @override
   void initState() {
     super.initState();
-     _loadUserData();
+    _loadUserData();
   }
 
   //TODO username load on home app bar
@@ -44,7 +44,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
           }
         }
 
-        Map<String, dynamic> userData = await AuthService().getUserData(user.uid);
+        Map<String, dynamic> userData = await AuthService().getUserData(
+          user.uid,
+        );
         if (mounted) {
           setState(() {
             name = userData['name'] ?? '';
@@ -63,13 +65,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AppBar(
       toolbarHeight: 100,
+      backgroundColor: isDark ? const Color(0xFF121B22) : Color(0XF0F0F0DD),
       flexibleSpace: Container(
         height: 300.0,
-        decoration: const BoxDecoration(
-          color: Color(0xFFFF8A65),
-          borderRadius: BorderRadius.vertical(
+        decoration: BoxDecoration(
+          color: isDark ? Color(0xFF121B22) : Color(0XF0F0F0DD),
+          borderRadius: const BorderRadius.vertical(
             bottom: Radius.elliptical(11, 11),
           ),
         ),
@@ -94,7 +98,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 Text(
                   'Hello',
                   style: GoogleFonts.dynaPuff(
-                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
@@ -102,7 +105,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 Text(
                   name.isNotEmpty ? name : '',
                   style: const TextStyle(
-                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
@@ -112,13 +114,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ),
           IconButton(
             onPressed: () async {
-
               await AuthService().signout(context);
-
             },
             icon: _buildLottieIcon(AssetsPath.logout),
           ),
-
         ],
       ),
     );

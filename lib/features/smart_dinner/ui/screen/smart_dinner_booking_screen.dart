@@ -1,3 +1,4 @@
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -81,7 +82,7 @@ class _SmartDinnerBookingScreenState extends State<SmartDinnerBookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Smart Dinner Suggestion')),
+      appBar: CustomAppBar(title: ('Smart Dinner Suggestion')),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : suggestedSlots.isEmpty
