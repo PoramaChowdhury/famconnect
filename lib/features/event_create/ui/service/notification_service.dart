@@ -17,34 +17,61 @@ class NotificationService {
 
   Future<void> init() async {
     await requestPermissions();
+// <<<<<<< ibshar
 
-    // Initialize timezone database and set default location
+//     // Initialize timezone database and set default location
+//     tz.initializeTimeZones();
+//     tz.setLocalLocation(tz.getLocation('Asia/Dhaka')); // Replace with your region if needed
+
+//     const AndroidInitializationSettings initializationSettingsAndroid =
+//     AndroidInitializationSettings('@mipmap/ic_launcher');
+
+//     final InitializationSettings initializationSettings = InitializationSettings(
+//       android: initializationSettingsAndroid,
+//     );
+
+//     await _notificationsPlugin.initialize(initializationSettings);
+//   }
+
+//   NotificationDetails _notificationDetails() {
+//     return NotificationDetails(
+//       android: AndroidNotificationDetails(
+//         'your_channel_id', // Replace with unique ID
+//         'your_channel_name', // Replace with user-friendly name
+//         channelDescription: 'your_channel_description',
+//         importance: Importance.max,
+//         priority: Priority.high,
+//         showWhen: true,
+//         playSound: true,
+//         enableVibration: true,
+//         ticker: 'ticker',
+//         visibility: NotificationVisibility.public,
+// =======
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Dhaka')); // Replace with your region if needed
-
+    tz.setLocalLocation(tz.getLocation('Asia/Dhaka'));
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
-
     final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
-
-    await _notificationsPlugin.initialize(initializationSettings);
+    await _notificationsPlugin.initialize(
+      initializationSettings,
+    );
   }
 
   NotificationDetails _notificationDetails() {
-    return NotificationDetails(
+    return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'your_channel_id', // Replace with unique ID
-        'your_channel_name', // Replace with user-friendly name
-        channelDescription: 'your_channel_description',
+        'event_reminder_channel', // Unique channel ID
+        'Event Reminders', // User-visible channel name
+        channelDescription: 'Event reminder notifications',
         importance: Importance.max,
         priority: Priority.high,
-        showWhen: true,
         playSound: true,
         enableVibration: true,
-        ticker: 'ticker',
         visibility: NotificationVisibility.public,
+        ticker: 'Reminder ticker',
+//>>>>>>> master
       ),
     );
   }
@@ -74,11 +101,17 @@ class NotificationService {
     required DateTime selectedTime,
   }) async {
     if (selectedTime.isBefore(DateTime.now())) {
-      selectedTime = selectedTime.add(const Duration(days: 1));
+// <<<<<<< ibshar
+//       selectedTime = selectedTime.add(const Duration(days: 1));
+//     }
+
+//     final tz.TZDateTime scheduledTime = tz.TZDateTime.from(selectedTime, tz.local);
+
+// =======
+      selectedTime = selectedTime.add(const Duration(minutes: 1));
     }
-
     final tz.TZDateTime scheduledTime = tz.TZDateTime.from(selectedTime, tz.local);
-
+//>>>>>>> master
     try {
       await _notificationsPlugin.zonedSchedule(
         id,
@@ -87,35 +120,76 @@ class NotificationService {
         scheduledTime,
         _notificationDetails(),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-        uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
+// <<<<<<< ibshar
+//         matchDateTimeComponents: DateTimeComponents.time,
+//         uiLocalNotificationDateInterpretation:
+//         UILocalNotificationDateInterpretation.absoluteTime,
+//       );
+//       print('Notification scheduled successfully');
+//     } catch (e) {
+//       print('Error scheduling notification: $e');
+//     }
+//   }
+
+//   Future<void> periodicNotification({
+//     required int id,
+//     required String title,
+//     required String body,
+//   }) async {
+//     try {
+//       await _notificationsPlugin.periodicallyShow(
+//         id,
+//         title,
+//         body,
+//         RepeatInterval.hourly, // Change to daily or weekly as needed
+//         _notificationDetails(),
+//         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+//       );
+//       print('Periodic notification set successfully');
+//     } catch (e) {
+//       print('Error setting periodic notification: $e');
+//     }
+//   }
+// =======
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       );
-      print('Notification scheduled successfully');
+      print('Notification scheduled for: \$scheduledTime');
     } catch (e) {
-      print('Error scheduling notification: $e');
+      print('Error scheduling notification: \$e');
     }
   }
 
-  Future<void> periodicNotification({
+
+  /*Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
+    required DateTime selectedTime,
   }) async {
+    final DateTime safeTime = selectedTime.isBefore(DateTime.now())
+        ? DateTime.now().add(const Duration(minutes: 1))
+        : selectedTime;
+
+    final tz.TZDateTime scheduledTime = tz.TZDateTime.from(safeTime, tz.local);
     try {
-      await _notificationsPlugin.periodicallyShow(
+      await _notificationsPlugin.zonedSchedule(
         id,
         title,
         body,
-        RepeatInterval.hourly, // Change to daily or weekly as needed
+        scheduledTime,
         _notificationDetails(),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       );
-      print('Periodic notification set successfully');
+      print('Notification scheduled for: $scheduledTime');
     } catch (e) {
-      print('Error setting periodic notification: $e');
+      print('Error scheduling notification: $e');
     }
-  }
+  }*/
+
+//>>>>>>> master
 
   Future<void> unsubscribeToAllNotification() async {
     await _notificationsPlugin.cancelAll();

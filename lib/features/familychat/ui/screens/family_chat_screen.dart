@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
+import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
 import 'package:famconnect/features/familychat/ui/screens/chat_room_screen.dart';
 import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
@@ -33,10 +34,10 @@ class _FamilyChatScreenState extends State<FamilyChatScreen> {
         );
         break;
       case 1:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const EventCreatScreen()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const EventCreateScreen()),
+      );
         break;
       case 2:
         break;
@@ -94,7 +95,6 @@ class _FamilyChatScreenState extends State<FamilyChatScreen> {
   void _openPrivateChat(String uid, String name) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final chatId = _generateChatId(currentUser.uid, uid);
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -107,7 +107,6 @@ class _FamilyChatScreenState extends State<FamilyChatScreen> {
       ),
     );
   }
-
 
   String _generateChatId(String id1, String id2) {
     return id1.hashCode <= id2.hashCode ? '$id1\_$id2' : '$id2\_$id1';
@@ -135,9 +134,7 @@ class _FamilyChatScreenState extends State<FamilyChatScreen> {
               stream: FirebaseFirestore.instance.collection('users').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-
                 final users = snapshot.data!.docs.where((doc) => doc.id != currentUser.uid).toList();
-
                 return ListView.builder(
                   itemCount: users.length,
                   itemBuilder: (context, index) {

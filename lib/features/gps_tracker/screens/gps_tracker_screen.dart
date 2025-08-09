@@ -1,10 +1,11 @@
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FamilyMapScreen extends StatefulWidget {
-  final String userId; // Unique identifier for the family member
+  final String userId;
   static const String name = 'family_map';
 
   const FamilyMapScreen({
@@ -70,7 +71,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Family Location Sharing')),
+      appBar: CustomAppBar(title: ('Family Location Sharing')),
       body: _currentLocation == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(

@@ -27,14 +27,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
           fontSize: 20,
         ),
       ),
-      backgroundColor: isDark ? const Color(0xFF121B22) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF121B22) : Color(0XF0F0F0DD),
       iconTheme: IconThemeData(
         color: isDark ? Colors.white : Colors.black,
       ),
       elevation: 4,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          // color: isDark ? const Color(0xFF121B22) : Colors.white,
+           color: isDark ? const Color(0xFF121B22) : Color(0XF0F0F0DD),
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.elliptical(12, 12),
           ),

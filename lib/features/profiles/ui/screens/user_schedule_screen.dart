@@ -1,3 +1,4 @@
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,12 +6,15 @@ import 'package:table_calendar/table_calendar.dart';
 
 class UserScheduleScreen extends StatefulWidget {
   const UserScheduleScreen({super.key});
+
   @override
   State<UserScheduleScreen> createState() => _UserScheduleScreenState();
 }
+
 class _UserScheduleScreenState extends State<UserScheduleScreen> {
   DateTime _selectedDay = DateTime.now();
   final Map<DateTime, List<Map<String, String>>> _events = {};
+
   @override
   void initState() {
     super.initState();
@@ -18,7 +22,11 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
   }
 
   void _addEvent(String status, String description, String timeRange) async {
-    final key = DateTime.utc(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+    final key = DateTime.utc(
+      _selectedDay.year,
+      _selectedDay.month,
+      _selectedDay.day,
+    );
     if (_events[key] == null) {
       _events[key] = [];
     }
@@ -28,9 +36,9 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
 
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User not logged in")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("User not logged in")));
         return;
       }
 
@@ -64,22 +72,24 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
     final dayStart = DateTime.utc(day.year, day.month, day.day);
     final dayEnd = dayStart.add(const Duration(days: 1));
 
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('user_schedules')
-        .doc(user.uid)
-        .collection('schedules')
-        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(dayStart))
-        .where('date', isLessThan: Timestamp.fromDate(dayEnd))
-        .get();
+    final querySnapshot =
+        await FirebaseFirestore.instance
+            .collection('user_schedules')
+            .doc(user.uid)
+            .collection('schedules')
+            .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(dayStart))
+            .where('date', isLessThan: Timestamp.fromDate(dayEnd))
+            .get();
 
-    final eventList = querySnapshot.docs.map((doc) {
-      final data = doc.data();
-      return {
-        "status": (data['status'] ?? 'Busy').toString(),
-        "description": (data['description'] ?? '').toString(),
-        "docId": doc.id,
-      };
-    }).toList();
+    final eventList =
+        querySnapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            "status": (data['status'] ?? 'Busy').toString(),
+            "description": (data['description'] ?? '').toString(),
+            "docId": doc.id,
+          };
+        }).toList();
 
     setState(() {
       _events[dayStart] = eventList;
@@ -90,7 +100,6 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
       print(doc.id);
       print(doc.data());
     }
-
   }
 
   void _showAddDialog() {
@@ -242,12 +251,10 @@ class _UserScheduleScreenState extends State<UserScheduleScreen> {
     setState(() {});
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Weekly Scheduler")),
+      appBar: CustomAppBar(title: "Weekly Scheduler"),
       body: Column(
         children: [
           TableCalendar(

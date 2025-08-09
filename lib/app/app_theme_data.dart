@@ -6,7 +6,7 @@ class AppThemeData {
   static ThemeData get lightThemeData {
     return ThemeData(
       colorSchemeSeed: AppColors.themeColor,
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: Color(0xFFF0F0F0),
       brightness: Brightness.light,
 
       progressIndicatorTheme: const ProgressIndicatorThemeData(
@@ -14,7 +14,7 @@ class AppThemeData {
       ),
 
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFF0F0F0),
+        backgroundColor: Color(0XF0F0F0DD),
         elevation: 3,
         iconTheme: IconThemeData(color: Colors.black87),
         titleTextStyle: TextStyle(
@@ -67,7 +67,7 @@ class AppThemeData {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFFF0F0F0), // or Color(0xFFF0F0F0) for light theme
+        backgroundColor: Color(0XF0F0F0DD),
         selectedItemColor: AppColors.themeColor,
         unselectedItemColor: Colors.grey,
       ),
@@ -79,7 +79,6 @@ class AppThemeData {
       colorSchemeSeed: AppColors.themeColor,
       scaffoldBackgroundColor: const Color(0xFF121212),
       brightness: Brightness.dark,
-
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.themeColor,
       ),
@@ -132,7 +131,7 @@ class AppThemeData {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFF121B22), // or Color(0xFFF0F0F0) for light theme
+        backgroundColor: Color(0xFF121B22),
         selectedItemColor: AppColors.themeColor,
         unselectedItemColor: Colors.grey,
       ),

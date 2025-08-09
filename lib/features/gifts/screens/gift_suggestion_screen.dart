@@ -255,6 +255,7 @@ class _GiftSuggestionScreenState extends State<GiftSuggestionScreen> {
 // }
 
 
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:famconnect/features/gifts/controller/gift_suggestion_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -309,7 +310,7 @@ class GiftSuggestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Gift Suggestions')),
+      appBar: CustomAppBar(title: ('Gift Suggestions')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
