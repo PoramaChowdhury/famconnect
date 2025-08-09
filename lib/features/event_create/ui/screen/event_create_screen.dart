@@ -234,8 +234,7 @@
 //   }
 // }
 //
-///
-/*
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:famconnect/features/event_create/ui/service/notification_service.dart';
@@ -244,6 +243,7 @@ import 'package:famconnect/features/home/ui/screens/home_screen.dart';
 import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_widget.dart';
 import 'package:famconnect/features/profiles/ui/screens/profile_screen.dart';
 import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -454,6 +454,7 @@ import 'package:famconnect/features/home/ui/widgets/bottom_nav_bar_indicator_wid
 import 'package:famconnect/features/profiles/ui/screens/profile_screen.dart';
 import 'package:famconnect/features/setting/ui/screen/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -469,6 +470,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
   int _currentIndex = 1;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
   final NotificationService _notificationService = NotificationService();
   CalendarFormat _calendarFormat = CalendarFormat.week;
 
@@ -476,13 +478,16 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
   void initState() {
     super.initState();
     _notificationService.init();
+
     _selectedDay = DateTime.now();
+
   }
 
   void _onNavBarTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+
     switch (index) {
       case 0:
         Navigator.pushReplacement(
@@ -490,8 +495,10 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );
         break;
+
       case 1:
         break;
+
       case 2:
         Navigator.pushReplacement(
           context,
@@ -516,12 +523,75 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
   void _showCreateEventDialog() {
     final titleController = TextEditingController();
     DateTime selectedDate = DateTime.now();
-    TimeOfDay selectedTime = TimeOfDay.now();
-    bool isPublic = false;
+// <<<<<<< ibshar
+// =======
+//     TimeOfDay selectedTime = TimeOfDay.now();
+//     bool isPublic = false;
+// >>>>>>> master
 
     showDialog(
       context: context,
       builder: (ctx) {
+// <<<<<<< ibshar
+//         return AlertDialog(
+//           title: const Text('Create Event'),
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               TextField(
+//                 controller: titleController,
+//                 decoration: const InputDecoration(labelText: 'Event Title'),
+//               ),
+//               const SizedBox(height: 10),
+//               ElevatedButton(
+//                 child: const Text('Pick Date'),
+//                 onPressed: () async {
+//                   final picked = await showDatePicker(
+//                     context: context,
+//                     initialDate: selectedDate,
+//                     firstDate: DateTime(2000),
+//                     lastDate: DateTime(2100),
+//                   );
+//                   if (picked != null) {
+//                     setState(() {
+//                       selectedDate = picked;
+//                     });
+//                   }
+//                 },
+//               ),
+//             ],
+//           ),
+//           actions: [
+//             TextButton(
+//               child: const Text('Cancel'),
+//               onPressed: () => Navigator.pop(ctx),
+//             ),
+//             ElevatedButton(
+//               child: const Text('Save'),
+//               onPressed: () async {
+//                 final title = titleController.text.trim();
+//                 if (title.isNotEmpty) {
+//                   await FirebaseFirestore.instance.collection('events').add({
+//                     'title': title,
+//                     'date': selectedDate.toIso8601String(),
+//                     'createdBy': 'user123', // Replace with actual user ID
+//                   });
+
+//                   final reminderDate = selectedDate.subtract(const Duration(days: 1));
+
+//                   await _notificationService.scheduleNotification(
+//                     id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+//                     title: 'Event Reminder',
+//                     body: title,
+//                     selectedTime: reminderDate,
+//                   );
+//                 }
+
+//                 Navigator.pop(ctx);
+//               },
+//             ),
+//           ],
+// =======
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -633,6 +703,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               ],
             );
           },
+//>>>>>>> master
         );
       },
     );
@@ -640,6 +711,18 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
 
   Stream<List<Map<String, dynamic>>> getEventsForSelectedDay(DateTime day) {
     final selectedDateStr = DateFormat('yyyy-MM-dd').format(day);
+// <<<<<<< ibshar
+//     return FirebaseFirestore.instance
+//         .collection('events')
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//         .map((doc) => doc.data())
+//         .where((event) =>
+//     DateFormat('yyyy-MM-dd').format(DateTime.parse(event['date'])) ==
+//         selectedDateStr)
+//         .toList()
+//         .cast<Map<String, dynamic>>());
+// =======
     final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     return FirebaseFirestore.instance
@@ -664,6 +747,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
           .whereType<Map<String, dynamic>>() // Filters out nulls
           .toList();
     });
+// >>>>>>> master
   }
 
   @override
@@ -676,12 +760,15 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             focusedDay: _focusedDay,
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
+// <<<<<<< ibshar
+// =======
             calendarFormat: _calendarFormat,
             onFormatChanged: (format) {
               setState(() {
                 _calendarFormat = format;
               });
             },
+// >>>>>>> master
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
@@ -703,6 +790,28 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                 }
                 return ListView.builder(
                   itemCount: events.length,
+// <<<<<<< ibshar
+//                   itemBuilder: (ctx, i) => ListTile(
+//                     title: Text(events[i]['title'] ?? ''),
+//                     subtitle: Text(
+//                       DateFormat.yMMMd().format(DateTime.parse(events[i]['date'])),
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: ElevatedButton.icon(
+//               onPressed: _showCreateEventDialog,
+//               icon: const Icon(Icons.add),
+//               label: const Text('Create Event'),
+//             ),
+//           ),
+//         ],
+//       ),
+// =======
                   itemBuilder: (ctx, i) {
                     final event = events[i];
                     return ListTile(
@@ -734,6 +843,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
         tooltip: 'Create Event',
         child: const Icon(Icons.add),
       ),
+// >>>>>>> master
       bottomNavigationBar: BottomNavBarWidget(
         currentIndex: _currentIndex,
         onNavBarTapped: _onNavBarTapped,

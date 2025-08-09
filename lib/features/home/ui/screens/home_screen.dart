@@ -342,6 +342,10 @@ class _HomeScreenState extends State<HomeScreen> {
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+// <<<<<<< ibshar
+// import 'package:famconnect/features/core/core_management_screen.dart';
+// =======
+// >>>>>>> master
 import 'package:famconnect/features/dinner_booking/screen/dinner_booking_screen.dart';
 import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
 import 'package:famconnect/features/gifts/screens/gift_suggestion_screen.dart';
@@ -604,7 +608,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       return GridViewItem(
                         icon: Lottie.asset(AssetsPath.scheduleIcon, height: 70, width: 70),
                         label: 'Core Management',
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => GiftSuggestionScreen())),
+//<<<<<<< ibshar
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CoreManagementScreen() )),
+// =======
+//                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => GiftSuggestionScreen())),
+// >>>>>>> master
                       );
                     case 6:
                       return GridViewItem(

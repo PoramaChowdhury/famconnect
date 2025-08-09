@@ -7,6 +7,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await NotificationService().init();
+// <<<<<<< ibshar
+
+// =======
+// >>>>>>> master
   runApp(FamConnectApp());
 }
 
