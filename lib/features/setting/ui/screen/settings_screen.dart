@@ -1,3 +1,4 @@
+import 'package:famconnect/features/event_create/ui/screen/event_create_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
@@ -39,7 +40,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
         break;
       case 1:
-      // Event screen placeholder
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const EventCreateScreen()),
+        );
         break;
       case 2:
         Navigator.pushReplacement(

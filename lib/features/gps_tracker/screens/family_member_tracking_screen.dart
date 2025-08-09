@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -60,7 +61,7 @@ class _FamilyMemberTrackingScreenState extends State<FamilyMemberTrackingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Track Your Family')),
+      appBar: CustomAppBar(title: ('Track Your Family')),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: _centerPosition ?? const LatLng(24.9051, 91.8588),

@@ -1,3 +1,4 @@
+import 'package:famconnect/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -103,7 +104,7 @@ class _AllUsersFreeTimeScreenState extends State<AllUsersFreeTimeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('All Users Free Time')),
+      appBar: CustomAppBar(title: ('All Users Free Time')),
       body: Column(
         children: [
           Padding(
